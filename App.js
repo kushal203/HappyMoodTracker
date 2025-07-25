@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
 export default function App() {
-  const [mood, setMood] = useState(null);
+  const [selectedMood, setSelectedMood] = useState(null);
 
   const moods = [
     { emoji: '😊', label: 'Happy' },
@@ -12,25 +11,35 @@ export default function App() {
     { emoji: '😡', label: 'Angry' },
   ];
 
+  const handleSubmit = () => {
+    if (selectedMood) {
+      Alert.alert('Mood Submitted', `You're feeling: ${selectedMood}`);
+      setSelectedMood(null); // Reset mood
+    } else {
+      Alert.alert('No Mood Selected', 'Please select a mood before submitting.');
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>🌞 Welcome to Happy</Text>
-      <Text style={styles.subHeader}>How are you feeling today?</Text>
-
-      <View style={styles.moodContainer}>
-        {moods.map((m) => (
+      <Text style={styles.title}>🌞 How are you feeling today?</Text>
+      <View style={styles.emojiContainer}>
+        {moods.map((mood) => (
           <TouchableOpacity
-            key={m.label}
-            style={styles.moodButton}
-            onPress={() => setMood(m.label)}>
-            <Text style={styles.emoji}>{m.emoji}</Text>
+            key={mood.label}
+            onPress={() => setSelectedMood(mood.label)}
+            style={[
+              styles.emojiButton,
+              selectedMood === mood.label && styles.selectedEmoji,
+            ]}
+          >
+            <Text style={styles.emoji}>{mood.emoji}</Text>
           </TouchableOpacity>
         ))}
       </View>
-
-      {mood && (
-        <Text style={styles.thankYou}>You selected: {mood}</Text>
-      )}
+      <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
+        <Text style={styles.submitText}>Submit Mood</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -43,29 +52,37 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  header: {
+  title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  subHeader: {
-    fontSize: 18,
     marginBottom: 20,
+    textAlign: 'center',
   },
-  moodContainer: {
+  emojiContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: 30,
   },
-  moodButton: {
-    marginHorizontal: 10,
+  emojiButton: {
+    margin: 10,
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#ccc',
+  },
+  selectedEmoji: {
+    borderColor: '#007bff',
+    backgroundColor: '#e0f0ff',
   },
   emoji: {
     fontSize: 40,
   },
-  thankYou: {
-    fontSize: 20,
-    color: '#333',
-    marginTop: 20,
+  submitButton: {
+    backgroundColor: '#007bff',
+    padding: 15,
+    borderRadius: 10,
+  },
+  submitText: {
+    color: '#fff',
+    fontSize: 18,
   },
 });
